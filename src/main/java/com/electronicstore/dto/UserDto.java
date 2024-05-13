@@ -24,6 +24,7 @@ public class UserDto {
 //    @Email(message="Invalid user email..")
     @Pattern(regexp = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$",message = "Invalid Email")
     private String email;
+    
     @NotBlank
     private String password;
     @Size(min=4,max=6,message = "Invalid gender")
