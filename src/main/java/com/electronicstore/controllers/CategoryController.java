@@ -1,0 +1,91 @@
+package com.electronicstore.controllers;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.electronicstore.dto.CategoryDto;
+import com.electronicstore.service.CategoryService;
+import com.electronicstore.utility.ApiResponseMessage;
+import com.electronicstore.utility.PageableResponse;
+
+import jakarta.validation.Valid;
+
+@RestController
+@RequestMapping("/categories")
+public class CategoryController {
+
+	@Autowired
+	private CategoryService service;
+
+	// create
+	@PostMapping("/create")
+	public ResponseEntity<CategoryDto> createCategory(@RequestBody CategoryDto categoryDto) {
+
+		CategoryDto dto = service.create(categoryDto);
+
+		return new ResponseEntity<CategoryDto>(dto, HttpStatus.CREATED);
+
+	}
+
+	// update
+	@PutMapping("/update/{id}")
+	public ResponseEntity<CategoryDto> updateCategory(@RequestBody CategoryDto dto, @PathVariable String id) {
+
+		CategoryDto categoryDto = service.update(dto, id);
+
+		return new ResponseEntity<CategoryDto>(categoryDto, HttpStatus.ACCEPTED);
+
+	}
+
+	// getAll
+	@GetMapping("/getall")
+	public ResponseEntity<PageableResponse<CategoryDto>> getAllCategory(
+			@RequestParam(value="pageNumber",defaultValue = "0",required = false) Integer pageNo,
+			@RequestParam(value="pageSize", defaultValue = "5",required = false) Integer pageSize,
+			@RequestParam(value="sortBy",defaultValue = "title",required = false) String sortBy,
+			@RequestParam(value="sortDir",defaultValue="desc",required = false) String sortDir){
+		PageableResponse<CategoryDto> pageableResponse = service.getAll(pageNo, pageSize, sortBy, sortDir);
+		
+		return new ResponseEntity<PageableResponse<CategoryDto>>(pageableResponse, HttpStatus.OK);
+	}
+
+	// delete
+	@DeleteMapping("/delete/{id}")
+	public ResponseEntity<ApiResponseMessage> deleteCategory(@PathVariable("id") String categoryId) {
+		service.delete(categoryId);
+		
+		ApiResponseMessage apiResponseMessage = ApiResponseMessage.builder()
+				.message("category is deleted successfully...!!").success(true).status(HttpStatus.FORBIDDEN).build();
+		
+		return new ResponseEntity<ApiResponseMessage>(apiResponseMessage, HttpStatus.FORBIDDEN);
+	
+	}
+
+
+	// getbyId
+	@GetMapping("/get/{id}")
+	public ResponseEntity<CategoryDto> getcategoryById(@PathVariable("id") String id){
+		CategoryDto categoryDto = service.get(id);
+		
+		return new ResponseEntity<CategoryDto>(categoryDto, HttpStatus.FOUND);
+		
+	}
+	@GetMapping("/search/{key}")
+	public ResponseEntity<List<CategoryDto>> searchByKeyword(@PathVariable String key){
+		List<CategoryDto> searchedList = service.searchCategoryByKeyword(key);
+		
+		return new ResponseEntity<List<CategoryDto>>(searchedList, HttpStatus.OK);
+	}
+}
