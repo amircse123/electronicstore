@@ -34,4 +34,8 @@ public class ProductDto {
 	private boolean live;
 	
 	private boolean stock;
+	
+	private int discount;
+	
+	private String imageName;
 }

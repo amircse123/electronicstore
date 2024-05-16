@@ -1,30 +1,31 @@
 package com.electronicstore.service;
 
-import java.util.List;
+import org.springframework.data.domain.Pageable;
 
 import com.electronicstore.dto.ProductDto;
+import com.electronicstore.utility.PageableResponse;
 
 public interface ProductService {
 
-	//create
+	// create
 	ProductDto createProduct(ProductDto productDto);
-	
-	
-	//update
+
+	// update
 	ProductDto updateProduct(ProductDto productDto, String id);
-	
-	//delete
-	void deleteProduct(ProductDto productDto);
-	
-	//single product
+
+	// delete
+	void deleteProduct(String id);
+
+	// single product
 	ProductDto getSingleProduct(String id);
-	
-	//All product
-	List<ProductDto> getAllProduct();
-	
-	//get All Live
-	List<ProductDto> getAllLiveProduct();
-	
-	//search Product
-	List<ProductDto> searchProductByTitle(String subTitle);
+
+	// All product
+	PageableResponse<ProductDto> getAllProduct(int pageNo, int pageSize, String sortBy, String sortDir);
+
+	// get All Live
+	PageableResponse<ProductDto> getAllLiveProduct(int pageNo, int pageSize, String sortBy, String sortDir);
+
+	// search Product
+	PageableResponse<ProductDto> searchProductByTitle(String subTitle, int pageNo, int pageSize, String sortBy,
+			String sortDir);
 }

@@ -1,7 +1,6 @@
 package com.electronicstore.entity;
 
-import java.sql.Date;
-
+import java.util.Date;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -37,7 +36,9 @@ public class Product{
 	
 	private boolean stock;
 	
+	private int discount;
 	
-	
+	@Column(name="Product_image_name")
+	private String imageName;
 	
 }
