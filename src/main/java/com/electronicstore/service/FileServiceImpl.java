@@ -30,7 +30,7 @@ public class FileServiceImpl implements FileService {
 		String extention = originalFilename.substring(originalFilename.lastIndexOf("."));
 		String newFileName = id + extention;
 
-		String newFileNameWithPath = newFileName + File.separator + path;
+		String newFileNameWithPath =  path+newFileName ;
 
 		if (extention.equalsIgnoreCase(".jpg") || extention.equalsIgnoreCase(".jpeg")
 				|| extention.equalsIgnoreCase(".png")) {

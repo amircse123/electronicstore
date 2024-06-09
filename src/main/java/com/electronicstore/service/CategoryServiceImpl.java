@@ -1,6 +1,7 @@
 package com.electronicstore.service;
 
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -29,6 +30,9 @@ public class CategoryServiceImpl implements CategoryService {
 	@Override
 	public CategoryDto create(CategoryDto categoryDto) {
 		Category entity = mapper.map(categoryDto, Category.class);
+		
+		String id = UUID.randomUUID().toString();
+		entity.setCategoryId(id);
 		Category savedEntity = repo.save(entity);
 
 		return mapper.map(savedEntity, CategoryDto.class);
@@ -39,6 +43,10 @@ public class CategoryServiceImpl implements CategoryService {
 
 		Category entity = repo.findById(categoryId)
 				.orElseThrow(() -> new ResourceNotFoundException("Category Not found with given Id...!!"));
+		
+		
+		
+		entity.setCategoryId(categoryId);
 		entity.setTitle(categoryDto.getTitle());
 		entity.setCoverImage(categoryDto.getCoverImage());
 		entity.setDescription(categoryDto.getDescription());

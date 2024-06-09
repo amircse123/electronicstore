@@ -1,6 +1,6 @@
 package com.electronicstore.dto;
 
-import java.sql.Date;
+import java.util.Date;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Id;
@@ -38,4 +38,6 @@ public class ProductDto {
 	private int discount;
 	
 	private String imageName;
+	
+	private CategoryDto category;
 }

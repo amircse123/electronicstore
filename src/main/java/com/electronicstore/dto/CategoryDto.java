@@ -17,7 +17,7 @@ import lombok.Setter;
 @Component
 public class CategoryDto {
 
-	private Integer categoryId;
+	private String categoryId;
 	
 	@NotBlank
 	@Size(min =4, message="title must be of minmum 5 character...!!")

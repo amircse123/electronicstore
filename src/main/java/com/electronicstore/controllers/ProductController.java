@@ -1,13 +1,16 @@
 package com.electronicstore.controllers;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.StreamUtils;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -24,6 +27,8 @@ import com.electronicstore.service.FileService;
 import com.electronicstore.service.ProductService;
 import com.electronicstore.utility.ImageResponse;
 import com.electronicstore.utility.PageableResponse;
+
+import jakarta.servlet.http.HttpServletResponse;
 
 @RestController
 @RequestMapping("/products")
@@ -72,7 +77,7 @@ public class ProductController {
 	@GetMapping("/getAll")
 	public ResponseEntity<PageableResponse<ProductDto>> getAllProduct(
 			@RequestParam(name = "pageNo", defaultValue = "0", required = false) Integer pageNo,
-			@RequestParam(name = "pageSize", defaultValue = "2", required = false) Integer pageSize,
+			@RequestParam(name = "pageSize", defaultValue = "10", required = false) Integer pageSize,
 			@RequestParam(name = "sortBy", defaultValue = "title", required = false) String sortBy,
 			@RequestParam(name = "sortDir", defaultValue = "asc", required = false) String sortDir) {
 
@@ -109,16 +114,29 @@ public class ProductController {
 	@PostMapping("/image/{id}")
 	public ResponseEntity<ImageResponse> uploadProductImage(@RequestParam("productImage") MultipartFile file,
 			@PathVariable("id") String productId) throws IOException {
-		
 
 		String uploadFileNameWithPath = fileService.uploadFile(file, imagePath);
 		ProductDto productDto = productService.getSingleProduct(productId);
 		productDto.setImageName(uploadFileNameWithPath);
 		ProductDto updateProduct = productService.updateProduct(productDto, productId);
 
-		ImageResponse imageResponse = ImageResponse.builder().imageName(updateProduct.getImageName()).message("image  uploaded successfully..")
-				.status(HttpStatus.CREATED).success(true).build();
-		
+		ImageResponse imageResponse = ImageResponse.builder().imageName(updateProduct.getImageName())
+				.message("image  uploaded successfully..").status(HttpStatus.CREATED).success(true).build();
+
 		return new ResponseEntity<ImageResponse>(imageResponse, HttpStatus.CREATED);
+	}
+
+	// Serve Image
+
+	@GetMapping(value = "/image/{id}")
+	public void serveImage(@PathVariable String id, HttpServletResponse response) throws IOException {
+		ProductDto product = productService.getSingleProduct(id);
+
+		InputStream inputStream = fileService.getResource(imagePath,
+				Paths.get(product.getImageName()).getFileName().toString());
+		
+		response.setContentType(MediaType.IMAGE_JPEG_VALUE);
+		StreamUtils.copy(inputStream, response.getOutputStream());
+
 	}
 }
